@@ -1,0 +1,4 @@
+# ninja log v6
+5	689	7734249157153500	CMakeFiles/TheGameOfLife.dir/main.cpp.obj	1d3a1d1313133369
+11	895	7734249157203030	CMakeFiles/TheGameOfLife.dir/Life.cpp.obj	ee9f8c67c070ffec
+896	1063	7734249166055508	TheGameOfLife.exe	4cf4011e458bf549

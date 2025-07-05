@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "TheGameOfLife::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-TheGameOfLife-Debug-303dca4625c528d3c78e.json",
+					"jsonFile" : "target-TheGameOfLife-Debug-53098806434abc89fb61.json",
 					"name" : "TheGameOfLife",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/nick/Desktop/The Game Of Life/build",
-		"source" : "C:/Users/nick/Desktop/The Game Of Life"
+		"build" : "C:/Users/nick/Desktop/The-Game-of-Life/build",
+		"source" : "C:/Users/nick/Desktop/The-Game-of-Life"
 	},
 	"version" : 
 	{

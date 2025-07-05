@@ -1,5 +1,7 @@
-#include <iostream>
+#include "Life.h"
 
-int main(int, char**){
-    std::cout << "Hello, from TheGameOfLife!\n";
+int main(){
+    Life game;
+    game.generateLife();
+    return 0; 
 }

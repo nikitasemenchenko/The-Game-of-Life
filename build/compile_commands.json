@@ -1,8 +1,14 @@
 [
 {
-  "directory": "C:/Users/nick/Desktop/The Game Of Life/build",
-  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -g -o CMakeFiles\\TheGameOfLife.dir\\main.cpp.obj -c \"C:\\Users\\nick\\Desktop\\The Game Of Life\\main.cpp\"",
-  "file": "C:\\Users\\nick\\Desktop\\The Game Of Life\\main.cpp",
+  "directory": "C:/Users/nick/Desktop/The-Game-of-Life/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -g -o CMakeFiles\\TheGameOfLife.dir\\main.cpp.obj -c C:\\Users\\nick\\Desktop\\The-Game-of-Life\\main.cpp",
+  "file": "C:\\Users\\nick\\Desktop\\The-Game-of-Life\\main.cpp",
   "output": "CMakeFiles\\TheGameOfLife.dir\\main.cpp.obj"
+},
+{
+  "directory": "C:/Users/nick/Desktop/The-Game-of-Life/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -g -o CMakeFiles\\TheGameOfLife.dir\\Life.cpp.obj -c C:\\Users\\nick\\Desktop\\The-Game-of-Life\\Life.cpp",
+  "file": "C:\\Users\\nick\\Desktop\\The-Game-of-Life\\Life.cpp",
+  "output": "CMakeFiles\\TheGameOfLife.dir\\Life.cpp.obj"
 }
 ]

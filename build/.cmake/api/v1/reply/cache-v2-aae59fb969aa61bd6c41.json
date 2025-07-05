@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/nick/Desktop/The Game Of Life/build"
+			"value" : "c:/Users/nick/Desktop/The-Game-of-Life/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -142,8 +142,8 @@
 					"value" : "CXX compiler"
 				}
 			],
-			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/c++.exe"
+			"type" : "STRING",
+			"value" : "C:/msys64/mingw64/bin/g++.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_AR",
@@ -286,8 +286,8 @@
 					"value" : "C compiler"
 				}
 			],
-			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/cc.exe"
+			"type" : "STRING",
+			"value" : "C:/msys64/mingw64/bin/gcc.exe"
 		},
 		{
 			"name" : "CMAKE_C_COMPILER_AR",
@@ -575,7 +575,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/nick/Desktop/The Game Of Life/build/CMakeFiles/pkgRedirects"
+			"value" : "C:/Users/nick/Desktop/The-Game-of-Life/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -647,7 +647,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/nick/Desktop/The Game Of Life"
+			"value" : "C:/Users/nick/Desktop/The-Game-of-Life"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1343,7 +1343,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/nick/Desktop/The Game Of Life/build"
+			"value" : "C:/Users/nick/Desktop/The-Game-of-Life/build"
 		},
 		{
 			"name" : "TheGameOfLife_IS_TOP_LEVEL",
@@ -1367,7 +1367,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/nick/Desktop/The Game Of Life"
+			"value" : "C:/Users/nick/Desktop/The-Game-of-Life"
 		},
 		{
 			"name" : "_CMAKE_CXX_LINKER_PUSHPOP_STATE_SUPPORTED",
