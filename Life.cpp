@@ -1,7 +1,10 @@
 #include "Life.h"
 #include <vector>
 #include <iostream>
-#include <ctime>
+#include <ctime> // для рандомного заполнения
+#include <chrono> // для milliseconds (указание времени) 
+#include <thread> // для sleep_for (задержка)
+#include <cstdlib> // очистка экрана
 
 Life::Life(){
     life.resize(Y);
@@ -57,7 +60,13 @@ void Life::randomFill(){
 
 void Life::generateLife(){
     randomFill();
-    print();
+    
+    while (true){
+        print();
+        std::this_thread::sleep_for(std::chrono::milliseconds(speed));
+        system( "cls" );
+        nextGen();
+    }
 }
 
 void Life::nextGen() {
@@ -66,14 +75,17 @@ void Life::nextGen() {
         for (int j = 0; j < X; ++j){
             int neighbs = getNeighbours(i,j);
             
+            //Проверка на правила игры
             if (life[i][j]){
-                //живые
+                //клетка живет если у неё 2 или 3 соседа
+                //или умирает от перенаселения или одиночества
                 newLife[i][j] = (neighbs == 2 || neighbs == 3);
             } else {
-                //мёртвые
+                //клетка рождается, если у неё ровно 3 соседа
+                //иначе остаётся мертвой
                 newLife[i][j] = (neighbs == 3);
             }
         }
     }
-    life = newLife;
+    life = newLife; // обновляем состояние клеток
 }
