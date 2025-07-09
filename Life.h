@@ -5,8 +5,8 @@
 #include <iostream>
 
 //размеры поля
-const int X = 25; 
-const int Y = 25;
+const int X = 15; 
+const int Y = 15;
 
 class Life {
 private:

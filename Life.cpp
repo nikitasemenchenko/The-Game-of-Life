@@ -20,10 +20,10 @@ void Life::print(){
     for(int i = 0; i < Y; ++i){
         for(int j = 0; j < X; ++j){
             if(life[i][j]){
-                std::cout << "*";
+                std::cout << "* ";
             }
             else{
-                std::cout << " ";
+                std::cout << "  ";
             }
         }
         std::cout << "\n";
