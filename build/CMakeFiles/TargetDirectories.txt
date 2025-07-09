@@ -1,3 +1,3 @@
-C:/Users/nick/Desktop/The-Game-of-Life/build/CMakeFiles/TheGameOfLife.dir
-C:/Users/nick/Desktop/The-Game-of-Life/build/CMakeFiles/edit_cache.dir
-C:/Users/nick/Desktop/The-Game-of-Life/build/CMakeFiles/rebuild_cache.dir
+D:/TPU_WorkSpace/pract_JULY/build/CMakeFiles/pract_JULY.dir
+D:/TPU_WorkSpace/pract_JULY/build/CMakeFiles/edit_cache.dir
+D:/TPU_WorkSpace/pract_JULY/build/CMakeFiles/rebuild_cache.dir
