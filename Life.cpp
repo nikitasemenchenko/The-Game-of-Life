@@ -59,3 +59,21 @@ void Life::generateLife(){
     randomFill();
     print();
 }
+
+void Life::nextGen() {
+    std::vector<std::vector<bool>> newLife(Y, std::vector<bool> (X,false));
+    for (int i = 0; i < Y; ++i){
+        for (int j = 0; j < X; ++j){
+            int neighbs = getNeighbours(i,j);
+            
+            if (life[i][j]){
+                //живые
+                newLife[i][j] = (neighbs == 2 || neighbs == 3);
+            } else {
+                //мёртвые
+                newLife[i][j] = (neighbs == 3);
+            }
+        }
+    }
+    life = newLife;
+}
