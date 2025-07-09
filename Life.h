@@ -15,6 +15,7 @@ private:
     void print();
     void randomFill();
     int getNeighbours(int x, int y);
+    void nextGen();
 public:
     Life();
     ~Life() = default; // деструктор пустой, так как использую vector и он освобождает память сам
