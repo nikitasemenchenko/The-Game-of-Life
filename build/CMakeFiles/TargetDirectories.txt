@@ -1,3 +1,0 @@
-D:/TPU_WorkSpace/pract_JULY/build/CMakeFiles/pract_JULY.dir
-D:/TPU_WorkSpace/pract_JULY/build/CMakeFiles/edit_cache.dir
-D:/TPU_WorkSpace/pract_JULY/build/CMakeFiles/rebuild_cache.dir
