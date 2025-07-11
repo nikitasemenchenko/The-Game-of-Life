@@ -6,6 +6,8 @@
 #include <thread> // для sleep_for (задержка)
 #include <cstdlib> // очистка экрана
 
+#include <raylib.h> // библиотека для отрисовки
+
 Life::Life(){
     life.resize(Y);
     for(int i = 0; i < Y; ++i){
@@ -22,14 +24,13 @@ Life::Life(){
 void Life::print(){
     for(int i = 0; i < Y; ++i){
         for(int j = 0; j < X; ++j){
-            if(life[i][j]){
-                std::cout << "* ";
-            }
-            else{
-                std::cout << "  ";
-            }
+            Color color = life[i][j] ? GREEN : BLACK; // живая клетка - зелёная, мёртвая - чёрная
+
+            Rectangle cell = { static_cast<float>(j * cellSize), static_cast<float>(i * cellSize),
+                static_cast<float>(cellSize - 1), static_cast<float>(cellSize -1) }; // -1 чтобы было видно сетку
+
+            DrawRectangleRec(cell, color); // рисуем клетку
         }
-        std::cout << "\n";
     }
 }
 
@@ -59,14 +60,18 @@ void Life::randomFill(){
 }
 
 void Life::generateLife(){
+    InitWindow(width, height, "The Game of Life");
+    SetTargetFPS(fps);
     randomFill();
-    
-    while (true){
-        print();
-        std::this_thread::sleep_for(std::chrono::milliseconds(speed));
-        system( "cls" );
-        nextGen();
+     while (!WindowShouldClose())    // пока не нажата клавиша ESC или крестик
+    {
+        BeginDrawing();
+            ClearBackground(GRAY);
+            print();
+            nextGen();
+        EndDrawing();
     }
+    CloseWindow();
 }
 
 void Life::nextGen() {
