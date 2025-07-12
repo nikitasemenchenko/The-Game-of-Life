@@ -7,8 +7,8 @@ class Life {
 private:
     std::vector<std::vector<bool>> life; //само пространство с клетками
     //размеры поля
-    const int width = 700; 
-    const int height = 700;
+    const int width = 600; 
+    const int height = 600;
 
     const int cellSize = 20; //размер клетки
     const int X = width / cellSize; //количество клеток по горизонтали
