@@ -59,18 +59,64 @@ void Life::randomFill(){
     }
 }
 
-void Life::generateLife(){
-    InitWindow(width, height, "The Game of Life");
-    SetTargetFPS(fps);
-    randomFill();
-     while (!WindowShouldClose())    // пока не нажата клавиша ESC или крестик
-    {
+void Life::generateLife() {
+    const int panelWidth = 220; //ширина панели управления
+    
+    InitWindow(width + panelWidth, height, "The Game of Life");
+    SetTargetFPS(60);
+
+    //скорость
+    const int speedLevels[5] = {1, 5, 10, 20, 30};
+    int currentSpeedIndex = 2; //начальная скорость 10 fps
+    float simulationTimer = 0.0f;
+    bool isPaused = true; //начало с паузы
+
+    for (auto& row : life) {
+        std::fill(row.begin(), row.end(), false); //от начала до конца заполняем "мёртным" значением
+    }
+
+    while (!WindowShouldClose()) {
+        float deltaTime = GetFrameTime(); //замер времени между кадрами
+        
+        //рабочие кнопки
+        if (IsKeyPressed(KEY_UP)) currentSpeedIndex = std::min(4, currentSpeedIndex + 1);
+        if (IsKeyPressed(KEY_DOWN)) currentSpeedIndex = std::max(0, currentSpeedIndex - 1);
+        if (IsKeyPressed(KEY_SPACE)) isPaused = !isPaused;
+
+        //обновление поля
+        if (!isPaused) {
+            simulationTimer += deltaTime;
+            float updateInterval = 1.0f / speedLevels[currentSpeedIndex];
+            while (simulationTimer >= updateInterval) { //накопили нужный временной интервал - обновляем игру
+                simulationTimer -= updateInterval;
+                nextGen();
+            }
+        }
+
         BeginDrawing();
-            ClearBackground(GRAY);
-            print();
-            nextGen();
+
+        ClearBackground(GRAY);
+        DrawRectangle(panelWidth, 0, width, height, BLACK);  //игровое поле
+        print();
+
+        DrawRectangle(0, 0, panelWidth, height, DARKGRAY); //панель управления
+            
+        //текст для навигации
+        DrawText("CONTROLS", 20, 20, 20, WHITE);
+        DrawText("SPACE: Pause/Resume", 20, 50, 15, WHITE);
+        DrawText("UP/DOWN: Change speed", 20, 80, 15, WHITE);
+            
+        DrawText(TextFormat("Speed: %d FPS", speedLevels[currentSpeedIndex]), 20, 120, 20, WHITE);
+        DrawText(isPaused ? "[PAUSED]" : "[RUNNING]", 20, 150, 20, isPaused ? RED : GREEN);
+            
+        for (int i = 0; i < 5; i++) { //выбор скорости
+            Color col = (i <= currentSpeedIndex) ? GREEN : DARKGREEN;
+            DrawRectangle(20 + i*30, 180, 25, 25, col);
+            }
+            
         EndDrawing();
     }
+    
     CloseWindow();
 }
 

@@ -7,14 +7,18 @@ class Life {
 private:
     std::vector<std::vector<bool>> life; //само пространство с клетками
     //размеры поля
-    const int width = 800; 
-    const int height = 800;
+    const int width = 700; 
+    const int height = 700;
 
     const int cellSize = 20; //размер клетки
     const int X = width / cellSize; //количество клеток по горизонтали
     const int Y = height / cellSize; //количество клеток по вертикали
+
     //скорость игры
-    const int fps = 2;
+    // const int fps = 2;
+    int fps;
+    bool isPaused;
+    float sliderValue;
 
     int getNeighbours(int x, int y);
     void print();
