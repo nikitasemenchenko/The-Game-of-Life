@@ -93,14 +93,26 @@ void Life::generateLife() {
             }
         }
 
+        //визуал
         BeginDrawing();
 
         ClearBackground(GRAY);
-        DrawRectangle(panelWidth, 0, width, height, BLACK);  //игровое поле
-        print();
-
         DrawRectangle(0, 0, panelWidth, height, DARKGRAY); //панель управления
-            
+        DrawRectangle(panelWidth, 0, width, height, BLACK);  //игровое поле
+        // print();
+        
+        //отрисовка клеток с учетом смещения (из-за панели)
+        for (int row = 0; row < Y; ++row) {
+        for (int col = 0; col < X; ++col) {
+        //вычисление координаты клетки
+        const float posX = panelWidth + col * cellSize;
+        const float posY = row * cellSize;
+        
+        //клетка с границами
+        DrawRectangle(posX, posY, cellSize-1, cellSize-1, life[row][col] ? GREEN : BLACK);
+            }
+        }
+
         //текст для навигации
         DrawText("CONTROLS", 20, 20, 20, WHITE);
         DrawText("SPACE: Pause/Resume", 20, 50, 15, WHITE);
@@ -108,12 +120,30 @@ void Life::generateLife() {
             
         DrawText(TextFormat("Speed: %d FPS", speedLevels[currentSpeedIndex]), 20, 120, 20, WHITE);
         DrawText(isPaused ? "[PAUSED]" : "[RUNNING]", 20, 150, 20, isPaused ? RED : GREEN);
-            
-        for (int i = 0; i < 5; i++) { //выбор скорости
+        
+        //визуальный выбор скорости
+        for (int i = 0; i < 5; i++) { 
             Color col = (i <= currentSpeedIndex) ? GREEN : DARKGREEN;
             DrawRectangle(20 + i*30, 180, 25, 25, col);
             }
-            
+
+        //кнопка Generate
+        Rectangle generateBtn = {20, 220, 180, 40};
+        bool generateHover = CheckCollisionPointRec(GetMousePosition(), generateBtn);
+
+        DrawRectangleRec(generateBtn, generateHover ? LIGHTGRAY : GRAY);
+            //центрирование GENERATE
+        const char* generateText = "GENERATE";
+        int textWidth = MeasureText(generateText, 20);
+        int textX = generateBtn.x + (generateBtn.width - textWidth) / 2;
+        int textY = generateBtn.y + (generateBtn.height - 20) / 2;
+        DrawText(generateText, textX, textY, 20, BLACK);
+
+        //обработка клика
+        if (generateHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            randomFill();
+        }
+        
         EndDrawing();
     }
     
