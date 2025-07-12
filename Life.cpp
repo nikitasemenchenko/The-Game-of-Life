@@ -130,8 +130,8 @@ void Life::generateLife() {
         //кнопка Generate
         Rectangle generateBtn = {20, 220, 180, 40};
         bool generateHover = CheckCollisionPointRec(GetMousePosition(), generateBtn);
+        DrawRectangleRec(generateBtn, generateHover ? LIGHTGRAY : GRAY); 
 
-        DrawRectangleRec(generateBtn, generateHover ? LIGHTGRAY : GRAY);
             //центрирование GENERATE
         const char* generateText = "GENERATE";
         int textWidth = MeasureText(generateText, 20);
@@ -143,10 +143,8 @@ void Life::generateLife() {
         if (generateHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             randomFill();
         }
-        
         EndDrawing();
     }
-    
     CloseWindow();
 }
 
