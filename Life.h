@@ -38,5 +38,4 @@ public:
     void generateLife();
 };
 
-
 #endif
