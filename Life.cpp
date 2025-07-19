@@ -8,40 +8,38 @@
 
 #include <raylib.h> // библиотека для отрисовки
 
-Life::Life(){
-    life.resize(Y);
-    for(int i = 0; i < Y; ++i){
-        life[i].resize(X);
-    }
-    // т.к конструктор, заполняем сначала false
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
-            life[i][j] = false;
-        }
+Life::Life() {
+    dropdownRect = {20, 370, 180, 30};
+    // Инициализируем размеры (cellsInRow задается в заголовочном файле, по умолчанию 40)
+    cellSize = fieldSize / cellsInRow;
+    
+    // Создаем сетку заданного размера
+    life.resize(cellsInRow);
+    for(int i = 0; i < cellsInRow; ++i) {
+        life[i].resize(cellsInRow, false); // Инициализируем все клетки как false
     }
 }
 
 void Life::print(){
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
+    for(int i = 0; i < cellsInRow; ++i){
+        for(int j = 0; j < cellsInRow; ++j){
             Color color = life[i][j] ? GREEN : BLACK; // живая клетка - зелёная, мёртвая - чёрная
 
             Rectangle cell = { static_cast<float>(j * cellSize + panelWidth), static_cast<float>(i * cellSize),
-                static_cast<float>(cellSize - 1), static_cast<float>(cellSize -1) }; // -1 чтобы было видно сетку
+                static_cast<float>(cellSize - 1), static_cast<float>(cellSize - 1) }; // -1 чтобы было видно сетку
 
             DrawRectangleRec(cell, color); // рисуем клетку
         }
     }
 }
 
-int Life::getNeighbours(int x, int y){
+int Life::getNeighbours(int x, int y) {
     int c = 0;
     for (int i = x-1; i <= x+1; ++i) {
         for (int j = y-1; j <= y+1; ++j) {
-            if (i == x && j == y) continue;
-            
-            if (i >= 0 && i < Y && 
-                j >= 0 && j < X && 
+            if (i == x && j == y) continue;  // пропускаем саму клетку
+            if (i >= 0 && i < cellsInRow && 
+                j >= 0 && j < cellsInRow && 
                 life[i][j]) {
                 c++;
             }
@@ -52,20 +50,21 @@ int Life::getNeighbours(int x, int y){
 
 void Life::randomFill(){
     srand(time(0));
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
+    for(int i = 0; i < cellsInRow; ++i){
+        for(int j = 0; j < cellsInRow; ++j){
             life[i][j] = rand() % 2;
         }
     }
 }
 
 void Life::clear() {
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
+    for(int i = 0; i < cellsInRow; ++i){
+        for(int j = 0; j < cellsInRow; ++j){
             life[i][j] = false;
         }
     }
 } 
+
 void Life::generateButton() {
     Rectangle generateBtn = {20, 220, 180, 40};
     bool generateHover = CheckCollisionPointRec(GetMousePosition(), generateBtn);
@@ -83,6 +82,7 @@ void Life::generateButton() {
         randomFill();
     }
 }
+
 void Life::clearButton() {
     Rectangle clearBtn = {20, 270, 180, 40};
         bool clearHover = CheckCollisionPointRec(GetMousePosition(), clearBtn);
@@ -112,7 +112,7 @@ void Life::draw() {
     Vector2 mousePos = GetMousePosition();
     int posX = (mousePos.x - panelWidth) / cellSize;
     int posY = mousePos.y / cellSize;
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused && posX >= 0 && posX < X && posY >= 0 && posY < Y) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused && posX >= 0 && posX < cellsInRow && posY >= 0 && posY < cellsInRow) {
         life[posY][posX] = !life[posY][posX];
     }
 }
@@ -144,9 +144,9 @@ void Life::drawButton() {
 }
 
 void Life::nextGen() {
-    std::vector<std::vector<bool>> newLife(Y, std::vector<bool> (X,false));
-    for (int i = 0; i < Y; ++i){
-        for (int j = 0; j < X; ++j){
+    std::vector<std::vector<bool>> newLife(cellsInRow, std::vector<bool> (cellsInRow,false));
+    for (int i = 0; i < cellsInRow; ++i){
+        for (int j = 0; j < cellsInRow; ++j){
             int neighbs = getNeighbours(i,j);
             
             //Проверка на правила игры
@@ -163,11 +163,8 @@ void Life::nextGen() {
     }
     life = newLife; // обновляем состояние клеток
 }
-
-
 void Life::generateLife() {  
-    InitWindow(width + panelWidth, height, "The Game of Life");
-
+    InitWindow(800 + panelWidth, 800, "The Game of Life");
     float simulationTimer = 0.0f;
 
     while (!WindowShouldClose()) {
@@ -177,7 +174,7 @@ void Life::generateLife() {
         if (!isPaused) {
             simulationTimer += deltaTime;
             float updateInterval = 1.0f / speedLevels[currentSpeedIndex];
-            while (simulationTimer >= updateInterval) { //накопили нужный временной интервал - обновляем игру
+            while (simulationTimer >= updateInterval) {
                 simulationTimer -= updateInterval;
                 nextGen();
             }
@@ -190,28 +187,80 @@ void Life::generateLife() {
 
         //визуал
         BeginDrawing();
-
         ClearBackground(GRAY);
-        DrawRectangle(0, 0, panelWidth, height, DARKGRAY); //панель управления
-        DrawRectangle(panelWidth, 0, width, height, DARKGRAY);  //игровое поле
         
-        print(); // отрисовка клеток
-
+        // Панель управления (фиксированный размер)
+        DrawRectangle(0, 0, panelWidth, 800, DARKGRAY);
+        
+        // Игровое поле (фиксированный размер 800x800)
+        DrawRectangle(panelWidth, 0, 800, 800, DARKGRAY);
+        
+        print(); // отрисовка клеток (учитывает cellSize)
+        
         information();
         
         //визуальный выбор скорости
         for (int i = 0; i < 5; i++) { 
             Color col = (i <= currentSpeedIndex) ? GREEN : DARKGREEN;
             DrawRectangle(20 + i*30, 180, 25, 25, col);
-            }
+        }
 
         generateButton();
         clearButton();
         drawButton();
+        drawDropdown();  
+        handleDropdown();
 
         if (drawingMode) draw();
 
         EndDrawing();
     }
     CloseWindow();
+}
+
+void Life::drawDropdown() {
+    DrawRectangleRec(dropdownRect, isDropdownOpen ? LIGHTGRAY : GRAY);
+    DrawText(sizeOptions[selectedSize], dropdownRect.x + 10, dropdownRect.y + 5, 20, BLACK);
+    DrawText(isDropdownOpen ? "▲" : "▼", dropdownRect.x + dropdownRect.width - 25, dropdownRect.y + 5, 20, BLACK);
+
+    //варианты, если открыто
+    if (isDropdownOpen) {
+        for (int i = 0; i < 5; i++) {
+            Rectangle option = {dropdownRect.x, dropdownRect.y + dropdownRect.height * (i + 1), dropdownRect.width, dropdownRect.height};
+            DrawRectangleRec(option, GRAY);
+            DrawText(sizeOptions[i], option.x + 10, option.y + 5, 20, BLACK);
+        }
+    }
+}
+
+void Life::handleDropdown() {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        Vector2 mousePos = GetMousePosition();
+        
+        //клик по основной кнопке
+        if (CheckCollisionPointRec(mousePos, dropdownRect)) {
+            isDropdownOpen = !isDropdownOpen;
+        }
+        //клик по варианту
+        else if (isDropdownOpen) {
+            for (int i = 0; i < 5; i++) {
+                Rectangle option = {dropdownRect.x, dropdownRect.y + dropdownRect.height * (i + 1), dropdownRect.width, dropdownRect.height};
+                if (CheckCollisionPointRec(mousePos, option)) {
+                    selectedSize = i;
+                    cellsInRow = availableSizes[i];
+                    updateGridSize(); //обновление размеры поля
+                    isDropdownOpen = false;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void Life::updateGridSize() {
+    cellSize = fieldSize / cellsInRow;
+    life.resize(cellsInRow);
+    for (auto& row : life) {
+        row.resize(cellsInRow, false);
+    }
 }
