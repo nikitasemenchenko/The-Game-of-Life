@@ -1,5 +1,6 @@
 #include "Life.h"
 #include <vector>
+#include <string>
 #include <iostream>
 #include <ctime> // для рандомного заполнения
 #include <chrono> // для milliseconds (указание времени) 
@@ -8,40 +9,39 @@
 
 #include <raylib.h> // библиотека для отрисовки
 
-Life::Life(){
-    life.resize(Y);
-    for(int i = 0; i < Y; ++i){
-        life[i].resize(X);
-    }
-    // т.к конструктор, заполняем сначала false
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
-            life[i][j] = false;
-        }
+Life::Life() {
+    cellsInRow = availableSizes[selectedSize];
+    cellSize = fieldSize / cellsInRow;
+    
+    std::srand(static_cast<unsigned>(std::time(nullptr))); 
+
+    // Создаем сетку заданного размера
+    life.resize(cellsInRow);
+    for(int i = 0; i < cellsInRow; ++i) {
+        life[i].resize(cellsInRow, false); // Инициализируем все клетки как false
     }
 }
 
 void Life::print(){
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
+    for(int i = 0; i < cellsInRow; ++i){
+        for(int j = 0; j < cellsInRow; ++j){
             Color color = life[i][j] ? GREEN : BLACK; // живая клетка - зелёная, мёртвая - чёрная
 
             Rectangle cell = { static_cast<float>(j * cellSize + panelWidth), static_cast<float>(i * cellSize),
-                static_cast<float>(cellSize - 1), static_cast<float>(cellSize -1) }; // -1 чтобы было видно сетку
+                static_cast<float>(cellSize - 1), static_cast<float>(cellSize - 1) }; // -1 чтобы было видно сетку
 
             DrawRectangleRec(cell, color); // рисуем клетку
         }
     }
 }
 
-int Life::getNeighbours(int x, int y){
+int Life::getNeighbours(int x, int y) {
     int c = 0;
     for (int i = x-1; i <= x+1; ++i) {
         for (int j = y-1; j <= y+1; ++j) {
-            if (i == x && j == y) continue;
-            
-            if (i >= 0 && i < Y && 
-                j >= 0 && j < X && 
+            if (i == x && j == y) continue;  // пропускаем саму клетку
+            if (i >= 0 && i < cellsInRow && 
+                j >= 0 && j < cellsInRow && 
                 life[i][j]) {
                 c++;
             }
@@ -52,24 +52,24 @@ int Life::getNeighbours(int x, int y){
 
 void Life::randomFill(){
     srand(time(0));
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
+    for(int i = 0; i < cellsInRow; ++i){
+        for(int j = 0; j < cellsInRow; ++j){
             life[i][j] = rand() % 2;
         }
     }
 }
 
 void Life::clear() {
-    for(int i = 0; i < Y; ++i){
-        for(int j = 0; j < X; ++j){
+    for(int i = 0; i < cellsInRow; ++i){
+        for(int j = 0; j < cellsInRow; ++j){
             life[i][j] = false;
         }
     }
 } 
 void Life::generateButton() {
     Rectangle generateBtn = {20, 220, 180, 40};
-    bool generateHover = CheckCollisionPointRec(GetMousePosition(), generateBtn);
-    DrawRectangleRec(generateBtn, generateHover ? LIGHTGRAY : GRAY); 
+    bool isInGenerateBtnArea = CheckCollisionPointRec(GetMousePosition(), generateBtn);
+    DrawRectangleRec(generateBtn, isInGenerateBtnArea ? LIGHTGRAY : GRAY); 
 
     //центрирование GENERATE
     const char* generateText = "GENERATE";
@@ -79,14 +79,14 @@ void Life::generateButton() {
     DrawText(generateText, textX, textY, 20, BLACK);
 
     //обработка клика
-    if (generateHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
+    if (isInGenerateBtnArea && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
         randomFill();
     }
 }
 void Life::clearButton() {
     Rectangle clearBtn = {20, 270, 180, 40};
-        bool clearHover = CheckCollisionPointRec(GetMousePosition(), clearBtn);
-        DrawRectangleRec(clearBtn, clearHover ? LIGHTGRAY : GRAY);
+        bool isInClearBtnArea = CheckCollisionPointRec(GetMousePosition(), clearBtn);
+        DrawRectangleRec(clearBtn, isInClearBtnArea ? LIGHTGRAY : GRAY);
         //центрирование названия кнопки
         const char* clearText = "CLEAR";
         int textWidth = MeasureText(clearText, 20);
@@ -94,7 +94,7 @@ void Life::clearButton() {
         int textY = clearBtn.y + (clearBtn.height - 20) / 2;
         DrawText(clearText, textX, textY, 20, BLACK);
         //обработка клика
-        if (clearHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
+        if (isInClearBtnArea && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
             clear(); // очищаем поле
         }
 }
@@ -103,7 +103,7 @@ void Life::information(){
     DrawText("CONTROLS", 20, 20, 20, WHITE);
     DrawText("SPACE: Pause/Resume", 20, 50, 15, WHITE);
     DrawText("UP/DOWN: Change speed", 20, 80, 15, WHITE);      
-    DrawText(TextFormat("Speed: %d FPS", speedLevels[currentSpeedIndex]), 20, 120, 20, WHITE);
+    DrawText(TextFormat("Speed: %d GPS", speedLevels[currentSpeedIndex]), 20, 120, 20, WHITE);
     DrawText(isPaused ? "[PAUSED]" : "[RUNNING]", 20, 150, 20, isPaused ? RED : GREEN);
 }
 
@@ -112,7 +112,7 @@ void Life::draw() {
     Vector2 mousePos = GetMousePosition();
     int posX = (mousePos.x - panelWidth) / cellSize;
     int posY = mousePos.y / cellSize;
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused && posX >= 0 && posX < X && posY >= 0 && posY < Y) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused && posX >= 0 && posX < cellsInRow && posY >= 0 && posY < cellsInRow) {
         life[posY][posX] = !life[posY][posX];
     }
 }
@@ -123,14 +123,14 @@ void Life::drawButtonClick() {
 
 void Life::drawButton() {
     Rectangle drawButton = {20, 320, 180, 40};
-    bool drawHover = CheckCollisionPointRec(GetMousePosition(), drawButton);
-    Color buttonColor;
-    if(drawingMode) {
-        buttonColor = drawHover ? GREEN : LIME;
+    bool isInDrawBtnArea = CheckCollisionPointRec(GetMousePosition(), drawButton);
+    Color drawButtonColor;
+    if( drawingMode ) {
+        drawButtonColor = GREEN;
     } else {
-        buttonColor = drawHover ? LIGHTGRAY : GRAY;
+        drawButtonColor = isInDrawBtnArea? LIGHTGRAY : GRAY;
     }
-    DrawRectangleRec(drawButton, buttonColor);
+    DrawRectangleRec(drawButton, drawButtonColor);
     //центрирование названия кнопки
     const char* text = "DRAW";
     int textWidth = MeasureText(text, 20);
@@ -138,15 +138,15 @@ void Life::drawButton() {
     int textY = drawButton.y + (drawButton.height - 20) / 2;
     DrawText(text, textX, textY, 20, BLACK);
 
-    if (drawHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
+    if (isInDrawBtnArea && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
         drawButtonClick();
     }
 }
 
 void Life::nextGen() {
-    std::vector<std::vector<bool>> newLife(Y, std::vector<bool> (X,false));
-    for (int i = 0; i < Y; ++i){
-        for (int j = 0; j < X; ++j){
+    std::vector<std::vector<bool>> newLife(cellsInRow, std::vector<bool> (cellsInRow,false));
+    for (int i = 0; i < cellsInRow; ++i){
+        for (int j = 0; j < cellsInRow; ++j){
             int neighbs = getNeighbours(i,j);
             
             //Проверка на правила игры
@@ -161,13 +161,11 @@ void Life::nextGen() {
             }
         }
     }
-    life = newLife; // обновляем состояние клеток
+    life.swap(newLife); // обновляем состояние клеток
 }
 
-
 void Life::generateLife() {  
-    InitWindow(width + panelWidth, height, "The Game of Life");
-
+    InitWindow(800 + panelWidth, 800, "The Game of Life");
     float simulationTimer = 0.0f;
 
     while (!WindowShouldClose()) {
@@ -177,7 +175,7 @@ void Life::generateLife() {
         if (!isPaused) {
             simulationTimer += deltaTime;
             float updateInterval = 1.0f / speedLevels[currentSpeedIndex];
-            while (simulationTimer >= updateInterval) { //накопили нужный временной интервал - обновляем игру
+            while (simulationTimer >= updateInterval) {
                 simulationTimer -= updateInterval;
                 nextGen();
             }
@@ -190,28 +188,80 @@ void Life::generateLife() {
 
         //визуал
         BeginDrawing();
-
         ClearBackground(GRAY);
-        DrawRectangle(0, 0, panelWidth, height, DARKGRAY); //панель управления
-        DrawRectangle(panelWidth, 0, width, height, DARKGRAY);  //игровое поле
+        
+        // Панель управления
+        DrawRectangle(0, 0, panelWidth, 800, DARKGRAY);
+        
+        // Игровое поле фиксированный размер 800x800
+        DrawRectangle(panelWidth, 0, 800, 800, DARKGRAY);
         
         print(); // отрисовка клеток
-
+        
         information();
         
         //визуальный выбор скорости
         for (int i = 0; i < 5; i++) { 
             Color col = (i <= currentSpeedIndex) ? GREEN : DARKGREEN;
             DrawRectangle(20 + i*30, 180, 25, 25, col);
-            }
+        }
 
         generateButton();
         clearButton();
         drawButton();
+        drawDropdown();  
 
         if (drawingMode) draw();
-
+        
         EndDrawing();
     }
     CloseWindow();
+}
+
+void Life::drawDropdown() {
+    Rectangle dropdownMenu = {20, 370, 180, 30};
+    bool isInDropdownArea = CheckCollisionPointRec(GetMousePosition(), dropdownMenu);
+    DrawRectangleRec(dropdownMenu, (isInDropdownArea || isDropdownOpen)? LIGHTGRAY : GRAY);
+    // центрируем
+    int textWidth = MeasureText(sizeOptions[selectedSize], 20);
+    int textX = dropdownMenu.x + (dropdownMenu.width - textWidth) / 2;
+    int textY = dropdownMenu.y + (dropdownMenu.height - 20) / 2;
+    DrawText(sizeOptions[selectedSize], textX, textY, 20, BLACK);
+
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+        Vector2 mousePos = GetMousePosition();
+        if (CheckCollisionPointRec(mousePos, dropdownMenu)) {
+            isDropdownOpen = !isDropdownOpen;
+        }
+    }
+
+    if(isDropdownOpen){
+        for (int i = 0; i < 5; i++) {
+            Rectangle option = {dropdownMenu.x, dropdownMenu.y + dropdownMenu.height * (i + 1), dropdownMenu.width, dropdownMenu.height};
+            bool isInOptionArea = CheckCollisionPointRec(GetMousePosition(), option);
+            DrawRectangleRec(option, isInOptionArea ? LIGHTGRAY : GRAY);
+            //тут тоже центрировать надо
+            // к сожалению в цикле, хз пока что как по другому можно сделать
+            int textWidth = MeasureText(sizeOptions[i], 20);
+            int textX = option.x + (option.width - textWidth) / 2;
+            int textY = option.y + (option.height - 20) / 2;
+            DrawText(sizeOptions[i], textX, textY, 20, BLACK);
+
+            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isInOptionArea && isPaused) {
+                selectedSize = i;
+                cellsInRow = availableSizes[selectedSize];
+                updateGridSize();
+                isDropdownOpen = false;
+            }
+        }
+    }
+}
+
+void Life::updateGridSize() {
+    cellSize = fieldSize / cellsInRow;
+    life.resize(cellsInRow);
+    for (auto& row : life) {
+        row.resize(cellsInRow, false);
+    }
+    clear();
 }
