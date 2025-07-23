@@ -51,7 +51,6 @@ int Life::getNeighbours(int x, int y) {
 }
 
 void Life::randomFill(){
-    srand(time(0));
     for(int i = 0; i < cellsInRow; ++i){
         for(int j = 0; j < cellsInRow; ++j){
             life[i][j] = rand() % 2;
@@ -148,16 +147,45 @@ void Life::nextGen() {
     for (int i = 0; i < cellsInRow; ++i){
         for (int j = 0; j < cellsInRow; ++j){
             int neighbs = getNeighbours(i,j);
-            
-            //Проверка на правила игры
-            if (life[i][j]){
+            //шебуршим по клеткам и в зависимости от режима проверяем на правила игры
+            switch (currentGameMode)
+            {
+            case 0:
+                if (life[i][j]){
+                //
                 //клетка живет если у неё 2 или 3 соседа
                 //или умирает от перенаселения или одиночества
                 newLife[i][j] = (neighbs == 2 || neighbs == 3);
-            } else {
+                } else {
                 //клетка рождается, если у неё ровно 3 соседа
                 //иначе остаётся мертвой
                 newLife[i][j] = (neighbs == 3);
+                }
+                break;
+            case 1:
+                if (life[i][j]){
+                    newLife[i][j] = (neighbs == 1 || neighbs == 3 || neighbs == 5 || neighbs ==7);
+                } 
+                else {
+                    newLife[i][j] = (neighbs == 1 || neighbs == 3 || neighbs == 5 || neighbs ==7);
+                }
+                break;
+            case 2:
+                if (life[i][j]){
+                    newLife[i][j] = (neighbs == 5 || neighbs == 6 || neighbs == 7 || neighbs ==8);
+                } 
+                else {
+                    newLife[i][j] = (neighbs == 3 || neighbs == 5 || neighbs == 6 || neighbs ==7 || neighbs == 8);
+                }
+                break;
+            case 3:
+                if (life[i][j]){
+                    newLife[i][j] = (neighbs == 1 || neighbs == 2 || neighbs == 3 || neighbs ==4);
+                } 
+                else {
+                    newLife[i][j] = (neighbs == 3 || neighbs == 7);
+                }
+                break;
             }
         }
     }
@@ -166,6 +194,11 @@ void Life::nextGen() {
 
 void Life::generateLife() {  
     InitWindow(800 + panelWidth, 800, "The Game of Life");
+
+    for (int i = 0; i < 5; ++i) {
+        optionTextWidths[i] = MeasureText(sizeOptions[i], 20);
+    } // для выпадающего списка ширина текств
+
     float simulationTimer = 0.0f;
 
     while (!WindowShouldClose()) {
@@ -212,7 +245,9 @@ void Life::generateLife() {
         drawDropdown();  
 
         if (drawingMode) draw();
-        
+
+        drawMods();
+
         EndDrawing();
     }
     CloseWindow();
@@ -223,7 +258,7 @@ void Life::drawDropdown() {
     bool isInDropdownArea = CheckCollisionPointRec(GetMousePosition(), dropdownMenu);
     DrawRectangleRec(dropdownMenu, (isInDropdownArea || isDropdownOpen)? LIGHTGRAY : GRAY);
     // центрируем
-    int textWidth = MeasureText(sizeOptions[selectedSize], 20);
+    int textWidth = optionTextWidths[selectedSize];
     int textX = dropdownMenu.x + (dropdownMenu.width - textWidth) / 2;
     int textY = dropdownMenu.y + (dropdownMenu.height - 20) / 2;
     DrawText(sizeOptions[selectedSize], textX, textY, 20, BLACK);
@@ -241,8 +276,7 @@ void Life::drawDropdown() {
             bool isInOptionArea = CheckCollisionPointRec(GetMousePosition(), option);
             DrawRectangleRec(option, isInOptionArea ? LIGHTGRAY : GRAY);
             //тут тоже центрировать надо
-            // к сожалению в цикле, хз пока что как по другому можно сделать
-            int textWidth = MeasureText(sizeOptions[i], 20);
+            int textWidth = optionTextWidths[i];
             int textX = option.x + (option.width - textWidth) / 2;
             int textY = option.y + (option.height - 20) / 2;
             DrawText(sizeOptions[i], textX, textY, 20, BLACK);
@@ -264,4 +298,30 @@ void Life::updateGridSize() {
         row.resize(cellsInRow, false);
     }
     clear();
+}
+
+void Life::drawMods() { 
+    DrawText("GAME MODES", 20, 560, 20, WHITE);
+    Rectangle drawButton = {20, 590, 180, 40};
+    for(int i = 0; i < 4; ++i) {
+        Rectangle modButton = {20, 590 + i * 50, 180, 40};
+        bool isInModBtnArea = CheckCollisionPointRec(GetMousePosition(), modButton);
+        Color modButtonColor;
+        if (currentGameMode == i) {
+            modButtonColor = GREEN;
+        } else {
+            modButtonColor = isInModBtnArea ? LIGHTGRAY : GRAY;
+        }
+        DrawRectangleRec(modButton, modButtonColor);
+        
+        //центрирование названия кнопки
+        int textWidth = MeasureText(gameModes[i], 20);
+        int textX = modButton.x + (modButton.width - textWidth) / 2;
+        int textY = modButton.y + (modButton.height - 20) / 2;
+        DrawText(gameModes[i], textX, textY, 20, BLACK);
+
+        if (isInModBtnArea && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isPaused) {
+            currentGameMode = i;
+        }
+    }
 }

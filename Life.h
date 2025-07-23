@@ -17,11 +17,16 @@ private:
     const int speedLevels[5] = {1, 5, 10, 20, 30};
     int currentSpeedIndex = 2; //начальная скорость 10 фпс
 
+
     //для выпадающего списка
     bool isDropdownOpen = false;
     const char* sizeOptions[5] = {"25x25", "40x40","50x50", "80x80", "100x100"};
     const int availableSizes[5] = {25, 40, 50, 80, 100};
     int selectedSize = 2; // по умолчанию 50x50
+    int optionTextWidths[5];
+
+    const char* gameModes[4] = {"Classic", "Fractals", "Titans", "Labyrinth"};
+    int currentGameMode = 0; // по началу дефолтный режим
 
     int getNeighbours(int x, int y);
     void print();
@@ -36,6 +41,7 @@ private:
     void drawButtonClick();
     void drawDropdown();
     void updateGridSize();
+    void drawMods();
     
 public:
     Life();
